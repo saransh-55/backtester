@@ -3,15 +3,12 @@ from typing import Any
 import random
 import pandas as pd
 import json
-from nautilus_trader.backtest.engine import BacktestEngine
-from nautilus_trader.core.data import Data
+
 from nautilus_trader.model.data import Bar, BarType, CustomData, DataType
-from nautilus_trader.model.identifiers import ClientId, InstrumentId, TraderId, Venue
+from nautilus_trader.model.identifiers import InstrumentId
 from nautilus_trader.model.instruments import Instrument
-from nautilus_trader.model.objects import Money
 from nautilus_trader.persistence.wranglers import BarDataWrangler
-from nautilus_trader.trading.strategy import Strategy
-from strategy import ApiFeatures
+from example.strategy import ApiFeatures
 
 
 def _safe_to_csv(df: pd.DataFrame | None, path: Path) -> None:

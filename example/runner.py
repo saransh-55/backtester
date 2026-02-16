@@ -11,8 +11,8 @@ from nautilus_trader.model.enums import AccountType, OmsType
 from nautilus_trader.model.identifiers import ClientId, TraderId, Venue
 from nautilus_trader.model.objects import Money
 from nautilus_trader.test_kit.providers import TestInstrumentProvider
-from strategy import MultiAssetDemoStrategy, MultiAssetDemoConfig
-from utils import _safe_to_csv, _write_json, load_ohlcv_csv, wrangle_1m_bars, build_api_custom_data_from_btc_bars
+from example.strategy import MultiAssetDemoStrategy, MultiAssetDemoConfig
+from example.utils import _safe_to_csv, _write_json, load_ohlcv_csv, wrangle_1m_bars, build_api_custom_data_from_btc_bars
 
 if __name__ == "__main__":
     btc_csv = "example/btc_ohlcv.csv"
