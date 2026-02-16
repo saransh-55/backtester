@@ -1,27 +1,17 @@
-from collections import deque
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
 
 import pandas as pd
 
 from nautilus_trader.backtest.engine import BacktestEngine
-from nautilus_trader.common.enums import LogColor
-from nautilus_trader.config import BacktestEngineConfig, LoggingConfig, StrategyConfig
-from nautilus_trader.core.data import Data
-from nautilus_trader.core.datetime import unix_nanos_to_dt
-from nautilus_trader.indicators import MovingAverageFactory, MovingAverageType
+from nautilus_trader.config import BacktestEngineConfig, LoggingConfig
 from nautilus_trader.model.currencies import USDT
-from nautilus_trader.model.custom import customdataclass
-from nautilus_trader.model.data import Bar, BarType, CustomData, DataType
-from nautilus_trader.model.enums import AccountType, OmsType, OrderSide, TimeInForce
-from nautilus_trader.model.identifiers import ClientId, InstrumentId, TraderId, Venue
-from nautilus_trader.model.instruments import Instrument
+from nautilus_trader.model.data import BarType
+from nautilus_trader.model.enums import AccountType, OmsType
+from nautilus_trader.model.identifiers import ClientId, TraderId, Venue
 from nautilus_trader.model.objects import Money
-from nautilus_trader.persistence.wranglers import BarDataWrangler
 from nautilus_trader.test_kit.providers import TestInstrumentProvider
-from nautilus_trader.trading.strategy import Strategy
-from strategy import MultiAssetDemoStrategy, MultiAssetDemoConfig, ApiFeatures
+from strategy import MultiAssetDemoStrategy, MultiAssetDemoConfig
 from utils import _safe_to_csv, _write_json, load_ohlcv_csv, wrangle_1m_bars, build_api_custom_data_from_btc_bars
 
 if __name__ == "__main__":
