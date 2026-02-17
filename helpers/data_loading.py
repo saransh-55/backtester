@@ -10,10 +10,19 @@ def load_ohlcv_data(path: str, parquet: bool = False) -> pd.DataFrame:
         df = pd.read_parquet(path)
     else:
         df = pd.read_csv(path, header=0)
-    
+
+    # Try both "Datetime" and "datetime" column names
+    datetime_col = None
+    if "Datetime" in df.columns:
+        datetime_col = "Datetime"
+    elif "datetime" in df.columns:
+        datetime_col = "datetime"
+    else:
+        raise ValueError(f"No datetime column found in data. Columns: {df.columns.tolist()}")
+
     return (
-        df.reindex(columns=["datetime", "Open", "High", "Low", "Close", "Volume"])
-        .assign(datetime=lambda d: pd.to_datetime(d["datetime"], format="%Y-%m-%d %H:%M:%S"))
+        df.reindex(columns=[datetime_col, "Open", "High", "Low", "Close", "Volume"])
+        .assign(datetime=lambda d: pd.to_datetime(d[datetime_col], utc=True))
         .rename(
             columns={
                 "datetime": "timestamp",
@@ -24,6 +33,7 @@ def load_ohlcv_data(path: str, parquet: bool = False) -> pd.DataFrame:
                 "Volume": "volume",
             }
         )
+        .drop(columns=[datetime_col] if datetime_col != "datetime" else [])
         .set_index("timestamp")
         .sort_index()
     )

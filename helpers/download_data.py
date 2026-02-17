@@ -9,12 +9,12 @@ from pathlib import Path
 from typing import Optional, List
 
 from helpers.fs import to_project_root
+from helpers.datafile_name_parser import to_datafile_name
 
 def _to_ms_utc(dt_str: str) -> int:
     ts = pd.Timestamp(dt_str)
     ts = ts.tz_localize("UTC") if ts.tzinfo is None else ts.tz_convert("UTC")
     return int(ts.timestamp() * 1000)
-
 
 def fetch_ohlcv(
     symbol: str,
@@ -89,11 +89,11 @@ def fetch_ohlcv(
     return df
 
 
-def write_output_file(df: pd.DataFrame, out_path: Optional[str], output_format: str, symbol: str, timeframe: str):
+def write_output_file(df: pd.DataFrame, out_path: Optional[str], output_format: str, symbol: str, timeframe: str, exchange_id: str):
     if out_path is None:
-        safe = symbol.replace("/", "-").replace(":", "-")
-        ext = ".parquet" if output_format == "parquet" else ".csv"
-        out_path = f"data/{safe}_{timeframe}{ext}"
+        ext = "parquet" if output_format == "parquet" else "csv"
+        filename = to_datafile_name(symbol, timeframe, exchange_id, ext)
+        out_path = f"data/{filename}"
 
     out_path = Path(to_project_root(out_path))
     print(f"Writing output to {out_path}...")
@@ -140,5 +140,5 @@ if __name__ == "__main__":
         max_retries=args.max_retries,
         end=args.end_time
     )
-    write_output_file(df, args.out_path, args.output_format, symbol, args.timeframe)
+    write_output_file(df, args.out_path, args.output_format, symbol, args.timeframe, args.exchange_id)
     print(df.head())
