@@ -81,11 +81,13 @@ def fetch_ohlcv(
 
     df = pd.DataFrame(rows, columns=["ts", "Open", "High", "Low", "Close", "Volume"])
     if df.empty:
-        df = pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
-        df.index = pd.DatetimeIndex([], name="Datetime", tz="UTC")
+        df = pd.DataFrame(columns=["datetime", "Open", "High", "Low", "Close", "Volume"])
+        df["datetime"] = pd.DatetimeIndex([], tz="UTC")
     else:
-        df["Datetime"] = pd.to_datetime(df["ts"], unit="ms", utc=True)
-        df = df.drop(columns=["ts"]).set_index("Datetime").sort_index()
+        df["datetime"] = pd.to_datetime(df["ts"], unit="ms", utc=True)
+        df = df.drop(columns=["ts"])
+        # Reorder columns to have datetime first
+        df = df[["datetime", "Open", "High", "Low", "Close", "Volume"]]
     return df
 
 
@@ -100,10 +102,10 @@ def write_output_file(df: pd.DataFrame, out_path: Optional[str], output_format: 
 
     tmp_path = out_path.with_suffix(out_path.suffix + ".tmp")
     if output_format == "parquet":
-        df.to_parquet(tmp_path)
+        df.to_parquet(tmp_path, index=False)
         os.replace(tmp_path, out_path)
     elif output_format == "csv":
-        df.to_csv(tmp_path)
+        df.to_csv(tmp_path, index=False)
         os.replace(tmp_path, out_path)
     else:
         raise ValueError(f"Unsupported output format: {output_format}")
