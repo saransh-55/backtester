@@ -15,8 +15,8 @@ from example.strategy import MultiAssetDemoStrategy, MultiAssetDemoConfig
 from example.utils import _safe_to_csv, _write_json, load_ohlcv_csv, wrangle_1m_bars, build_api_custom_data_from_btc_bars
 
 if __name__ == "__main__":
-    btc_csv = "example/btc_ohlcv.csv"
-    eth_csv = "example/eth_ohlcv.csv"
+    btc_csv = "data/BTC-USDT_1m_binance.csv"
+    eth_csv = "data/ETH-USDT_1m_binance.csv"
 
     out_dir = Path("backtest_outputs")
     out_dir.mkdir(parents=True, exist_ok=True)

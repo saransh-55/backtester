@@ -23,22 +23,29 @@ def _write_json(path: Path, obj: Any) -> None:
 
 def load_ohlcv_csv(path: str) -> pd.DataFrame:
     df = pd.read_csv(path, header=0)
-    return (
-        df.reindex(columns=["datetime", "Open", "High", "Low", "Close", "Volume"])
-        .assign(datetime=lambda d: pd.to_datetime(d["datetime"], format="%Y-%m-%d %H:%M:%S"))
-        .rename(
-            columns={
-                "datetime": "timestamp",
-                "Open": "open",
-                "High": "high",
-                "Low": "low",
-                "Close": "close",
-                "Volume": "volume",
-            }
-        )
-        .set_index("timestamp")
-        .sort_index()
-    )
+
+    # Handle both "Datetime" and "datetime" column names
+    datetime_col = "Datetime" if "Datetime" in df.columns else "datetime"
+
+    # Convert datetime column to pandas datetime
+    df["timestamp"] = pd.to_datetime(df[datetime_col], utc=True)
+
+    # Select and rename columns
+    result = df[["timestamp", "Open", "High", "Low", "Close", "Volume"]].rename(
+        columns={
+            "Open": "open",
+            "High": "high",
+            "Low": "low",
+            "Close": "close",
+            "Volume": "volume",
+        }
+    ).set_index("timestamp").sort_index()
+
+    # Ensure numeric columns are float64
+    for col in ["open", "high", "low", "close", "volume"]:
+        result[col] = pd.to_numeric(result[col], errors="coerce").astype("float64")
+
+    return result
 
 
 def wrangle_1m_bars(df: pd.DataFrame, bar_type: BarType, instrument: Instrument) -> list[Bar]:
